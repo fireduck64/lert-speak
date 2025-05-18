@@ -1,0 +1,4 @@
+bazel-bin
+bazel-lert-speak.git
+bazel-out
+bazel-testlogs

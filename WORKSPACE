@@ -14,8 +14,8 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 git_repository(
   name = "duckutil",
   remote = "https://github.com/fireduck64/duckutil",
-  commit = "46cdddf732d879992a7fb9999b341035a3dac366",
-  shallow_since = "1624077542 -0700",
+  commit = "79fdf78241f14b8654dfab5bb79397896a7e0a43",
+  shallow_since = "1726167094 -0700",
 )
 
 
