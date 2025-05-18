@@ -1,15 +1,25 @@
-FROM ubuntu
-
-RUN apt-get update
-RUN apt-get install -y bazel-bootstrap
-RUN apt-get install -y git
+FROM gcr.io/bazel-public/bazel:7.4.0 AS build
 
 RUN mkdir lertspeak
 WORKDIR /lertspeak
 
 COPY BUILD .
-COPY MODULE.bazel .
+#COPY MODULE.bazel .
 COPY WORKSPACE .
 COPY src src
 
-RUN bazel build :all
+RUN bazel build :all :LertSpeak_deploy.jar
+
+FROM debian AS run
+
+RUN apt-get update
+RUN apt-get -y install openjdk-17-jre-headless
+
+COPY --from=build /lertspeak/bazel-bin/LertSpeak_deploy.jar /LertSpeak_deploy.jar
+
+RUN mkdir -p /conf
+RUN touch /conf/lertspeak.conf
+
+ENTRYPOINT ["java", "-jar", "/LertSpeak_deploy.jar", "/conf/lertspeak.conf" ]
+
+
