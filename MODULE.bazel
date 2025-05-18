@@ -1,0 +1,37 @@
+###############################################################################
+# Bazel now uses Bzlmod by default to manage external dependencies.
+# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
+#
+# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
+###############################################################################
+
+
+bazel_dep(name = "rules_jvm_external", version = "6.2")
+git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+git_repository(
+  name = "duckutil",
+  remote = "https://github.com/fireduck64/duckutil",
+  commit = "b721d945278dc2069bb9f5c1556161b37d6b4ee8",
+  shallow_since = "1648055343 -0700"
+)
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+maven.install(
+    artifacts = [
+        "junit:junit:4.13.2",
+        "com.thetransactioncompany:jsonrpc2-server:1.11",
+        "net.minidev:json-smart:2.4.7",
+        "de.sfuhrm:chromecast-java-api-v2:0.12.13",
+        "commons-codec:commons-codec:1.11",
+        "org.eclipse.jetty.websocket:websocket-client:9.4.57.v20241219",
+
+    ],
+    repositories = [
+        "https://repo1.maven.org/maven2",
+        "https://maven.google.com",
+    ],
+
+)
+
+use_repo(maven, "maven")
