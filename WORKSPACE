@@ -26,11 +26,12 @@ maven_install(
         "de.sfuhrm:chromecast-java-api-v2:0.12.13",
         "commons-codec:commons-codec:1.11",
         "org.eclipse.jetty.websocket:websocket-client:9.4.57.v20241219",
-        "engineer.nightowl:sonos-api-java:0.0.25",
+        "org.jupnp:org.jupnp:3.0.3",
     ],
     repositories = [
         "https://repo1.maven.org/maven2",
         "https://maven.google.com",
+        "https://jcenter.bintray.com",
     ],
     #maven_install_json = "//:maven_install.json",
 )

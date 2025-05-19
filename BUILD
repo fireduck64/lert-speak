@@ -12,7 +12,7 @@ java_library(
     "@maven//:org_eclipse_jetty_websocket_websocket_client",
     "@maven//:org_eclipse_jetty_jetty_util",
     "@maven//:org_eclipse_jetty_websocket_websocket_api",
-    "@maven//:engineer_nightowl_sonos_api_java",
+    "@maven//:org_jupnp_org_jupnp",
   ],
 )
 

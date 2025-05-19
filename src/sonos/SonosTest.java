@@ -2,8 +2,12 @@ package duckutil.lertspeak.sonos;
 
 import duckutil.ConfigFile;
 import duckutil.Config;
-import engineer.nightowl.sonos.api.SonosApiClient;
-import engineer.nightowl.sonos.api.SonosApiConfiguration;
+
+import org.jupnp.UpnpService;
+import org.jupnp.UpnpServiceImpl;
+import org.jupnp.model.message.header.STAllHeader;
+import org.jupnp.registry.DefaultRegistryListener;
+import org.jupnp.DefaultUpnpServiceConfiguration;
 
 public class SonosTest
 {
@@ -16,17 +20,26 @@ public class SonosTest
   }
 
   public SonosTest(Config conf)
+    throws Exception
   {
-    conf.require("sonos_api_key");
-    conf.require("sonos_key_name");
-    conf.require("sonos_secret");
-		final SonosApiConfiguration configuration = new SonosApiConfiguration();
-		configuration.setApiKey(conf.get("sonos_api_key"));
-		configuration.setApiSecret(conf.get("sonos_secret"));
-		configuration.setApplicationId(conf.get("sonos_api_key"));
+    UpnpService upnpService = new UpnpServiceImpl(new DefaultUpnpServiceConfiguration());
 
-		final SonosApiClient client = new SonosApiClient(configuration);
+    System.out.println(upnpService);
+    upnpService.startup();
 
+    upnpService.getControlPoint().search(new STAllHeader());
+
+    upnpService.getRegistry().addListener(new MagicListener());
+
+    Thread.sleep(30000);
+
+    upnpService.shutdown();
+
+
+  }
+
+  public class MagicListener extends DefaultRegistryListener
+  {
 
   }
 }
