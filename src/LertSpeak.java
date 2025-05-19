@@ -54,7 +54,7 @@ public class LertSpeak
     while(true)
     {
       Thread.sleep(10000);
-      //cast_mgr.showPlayers();
+      cast_mgr.showPlayers();
 
     }
 

@@ -12,36 +12,85 @@ import java.util.TreeSet;
 import java.net.URL;
 import java.net.InetAddress;
 import java.util.logging.Logger;
+import java.util.TreeMap;
+import duckutil.PeriodicThread;
 
 public class CastMgr
 {
   private static final Logger logger = Logger.getLogger("duckutil.lertspeak.cast");
 
+  Config conf;
   public CastMgr(Config conf)
     throws Exception
   {
-    if (conf.isSet("cast_local_ip"))
-    {
-      ChromeCasts.startDiscovery(InetAddress.getByName(conf.get("cast_local_ip")));
-    }
-    ChromeCasts.startDiscovery();
+    this.conf = conf;
 
     conf.require("cast_speakers");
 
     selected_players = new TreeSet<>();
-
     selected_players.addAll( conf.getList("cast_speakers"));
+    new CastDiscoThread().start();
 
   }
   private String APP_ID="CC1AD845";
 
   private TreeSet<String> selected_players;
 
+  private TreeMap<String, ChromeCast> known_casts=new TreeMap<>();
+
+  public class CastDiscoThread extends PeriodicThread
+  { 
+    public CastDiscoThread()
+    {
+      super(600000L);
+    }
+
+    boolean first_pass_done=false;
+
+    public void runPass() throws Exception
+    {
+
+      if (conf.isSet("cast_local_ip"))
+      {
+        ChromeCasts.startDiscovery(InetAddress.getByName(conf.get("cast_local_ip")));
+      }
+      ChromeCasts.startDiscovery();
+
+      TreeMap<String, ChromeCast> new_casts = new TreeMap<>();
+
+      for(int i=0; i<45; i++)
+      {
+        Thread.sleep(1000);
+
+        for(ChromeCast cc : ChromeCasts.get())
+        {
+          String title = cc.getTitle();
+          new_casts.put(title, cc);
+        }
+
+        if (!first_pass_done)
+        {
+          TreeMap<String, ChromeCast> copy=new TreeMap<>();
+          copy.putAll(new_casts);
+          known_casts = copy;
+        }
+      }
+
+      known_casts = new_casts;
+
+      ChromeCasts.stopDiscovery();
+      first_pass_done=true;
+
+    }
+
+
+  }
+
   public synchronized void showPlayers()
   {
     int seen=0;
     int selected=0;
-    for(ChromeCast cc : ChromeCasts.get())
+    for(ChromeCast cc : known_casts.values())
     {
       String title = cc.getTitle();
       logger.info("player seen: " + cc.getTitle());
@@ -59,7 +108,7 @@ public class CastMgr
   public synchronized void playMedia(URL url)
     throws Exception
   {
-    for(ChromeCast cc : ChromeCasts.get())
+    for(ChromeCast cc : known_casts.values())
     {
       try
       {
