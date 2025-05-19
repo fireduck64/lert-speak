@@ -49,12 +49,12 @@ public class LertSpeak
 
     cast_mgr.showPlayers();
 
-    cast_mgr.playMedia(voice_media.getMediaURL("Crabs rarely go to college."));
+    //cast_mgr.playMedia(voice_media.getMediaURL("Crabs rarely go to college."));
 
     while(true)
     {
       Thread.sleep(10000);
-      cast_mgr.showPlayers();
+      //cast_mgr.showPlayers();
 
     }
 
