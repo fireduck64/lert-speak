@@ -24,18 +24,11 @@ public class SonosTest
   {
     UpnpService upnpService = new UpnpServiceImpl(new DefaultUpnpServiceConfiguration());
 
-    System.out.println(upnpService);
     upnpService.startup();
-
     upnpService.getControlPoint().search(new STAllHeader());
-
     upnpService.getRegistry().addListener(new MagicListener());
-
     Thread.sleep(30000);
-
     upnpService.shutdown();
-
-
   }
 
   public class MagicListener extends DefaultRegistryListener
