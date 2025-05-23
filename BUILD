@@ -13,6 +13,8 @@ java_library(
     "@maven//:org_eclipse_jetty_jetty_util",
     "@maven//:org_eclipse_jetty_websocket_websocket_api",
     "@maven//:org_jupnp_org_jupnp",
+    "@maven//:javax_servlet_javax_servlet_api",
+    "@maven//:org_eclipse_jetty_jetty_server",
   ],
 )
 
@@ -25,8 +27,8 @@ java_binary(
 )
 
 java_binary(
-  name = "SonosTest",
-  main_class = "duckutil.lertspeak.sonos.SonosTest",
+  name = "NoiseTest",
+  main_class = "duckutil.lertspeak.upnp.NoiseTest",
   runtime_deps = [
     ":lertspeaklib",
   ],

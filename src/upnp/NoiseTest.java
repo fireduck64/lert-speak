@@ -9,17 +9,17 @@ import org.jupnp.model.message.header.STAllHeader;
 import org.jupnp.registry.DefaultRegistryListener;
 import org.jupnp.DefaultUpnpServiceConfiguration;
 
-public class SonosTest
+public class NoiseTest
 {
   public static void main(String args[])
     throws Exception
   {
     ConfigFile config = new ConfigFile(args[0], "");
 
-    new SonosTest(config);
+    new NoiseTest(config);
   }
 
-  public SonosTest(Config conf)
+  public NoiseTest(Config conf)
     throws Exception
   {
     UpnpService upnpService = new UpnpServiceImpl(new DefaultUpnpServiceConfiguration());

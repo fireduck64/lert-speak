@@ -27,6 +27,9 @@ maven_install(
         "commons-codec:commons-codec:1.11",
         "org.eclipse.jetty.websocket:websocket-client:9.4.57.v20241219",
         "org.jupnp:org.jupnp:3.0.3",
+        "javax.servlet:javax.servlet-api:4.0.1",
+        "org.eclipse.jetty:jetty-server:12.0.21",
+
     ],
     repositories = [
         "https://repo1.maven.org/maven2",
