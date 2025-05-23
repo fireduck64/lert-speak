@@ -13,7 +13,9 @@ RUN bazel build :all :LertSpeak_deploy.jar
 FROM debian AS run
 
 RUN apt-get update
-RUN apt-get -y install openjdk-17-jre-headless
+RUN apt-get -y install openjdk-17-jre-headless locales
+
+RUN update-locale LC_TIME=C.UTF-8
 
 COPY --from=build /lertspeak/bazel-bin/LertSpeak_deploy.jar /LertSpeak_deploy.jar
 
@@ -21,5 +23,4 @@ RUN mkdir -p /conf
 RUN touch /conf/lertspeak.conf
 
 ENTRYPOINT ["java", "-jar", "/LertSpeak_deploy.jar", "/conf/lertspeak.conf" ]
-
 
