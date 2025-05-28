@@ -21,7 +21,7 @@ public class VoiceMedia implements WebHandler
   private static final Logger logger = Logger.getLogger("duckutil.lertspeak.voice");
 
   File cache_dir;
-  String voice_id;
+  String default_voice_id;
   String media_host;
   int media_port;
   String api_key;
@@ -34,7 +34,7 @@ public class VoiceMedia implements WebHandler
   {
     cache_dir = new File(conf.require("media_cache_path"));
 
-    voice_id = conf.require("media_voice");
+    default_voice_id = conf.require("media_voice");
 
     api_key = conf.require("elevenlabs_api_key");
 
@@ -49,8 +49,13 @@ public class VoiceMedia implements WebHandler
     new DuckWebServer(null, media_port, this, 16);
 
   }
-
   public URL getMediaURL(String statement)
+    throws Exception
+  {
+    return getMediaURL(default_voice_id, statement);
+  }
+
+  public URL getMediaURL(String voice_id, String statement)
     throws Exception
   {
 

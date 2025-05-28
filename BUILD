@@ -31,5 +31,13 @@ java_binary(
   ],
 )
 
+java_binary(
+  name = "ApiSpeak",
+  main_class = "duckutil.lertspeak.ApiSpeak",
+  runtime_deps = [
+    ":lertspeaklib",
+  ],
+)
+
 
 
