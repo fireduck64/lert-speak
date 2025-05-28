@@ -1,23 +1,18 @@
-
 package duckutil.lertspeak.nvr;
-import java.util.concurrent.LinkedBlockingQueue;
-
-
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONArray;
 
 import duckutil.Config;
-import duckutil.PeriodicThread;
-import java.util.concurrent.TimeUnit;
-import java.util.TreeMap;
-import java.net.HttpURLConnection;
-import javax.net.ssl.HttpsURLConnection;
-import java.net.URL;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import net.minidev.json.parser.JSONParser;
-import duckutil.lertspeak.LertSpeak;
 import duckutil.LRUCache;
-import java.util.logging.Logger;
+import duckutil.PeriodicThread;
+import duckutil.lertspeak.LertSpeak;
+import java.net.URL;
+import java.util.TreeMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.HttpsURLConnection;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 public class EventProc extends PeriodicThread
 {
@@ -53,7 +48,7 @@ public class EventProc extends PeriodicThread
 
   }
 
-  public void runPass() 
+  public void runPass()
     throws Exception
   {
     JSONObject msg = queue.poll(20, TimeUnit.SECONDS);
@@ -78,7 +73,7 @@ public class EventProc extends PeriodicThread
     }
     else if (type.equals("smartDetectZone"))
     {
-      
+
       sb.append(" saw");
       JSONArray stuff = (JSONArray) item.get("smartDetectTypes");
       for(Object o : stuff)
@@ -146,13 +141,13 @@ public class EventProc extends PeriodicThread
 
     HttpsURLConnection conn = (HttpsURLConnection) u.openConnection();
 
-		SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
-		sslContextFactory.setTrustAll(true);
-		sslContextFactory.setEndpointIdentificationAlgorithm(null);
+    SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
+    sslContextFactory.setTrustAll(true);
+    sslContextFactory.setEndpointIdentificationAlgorithm(null);
     sslContextFactory.start();
 
-		conn.setSSLSocketFactory( sslContextFactory.getSslContext().getSocketFactory());
-		conn.setRequestMethod("GET");
+    conn.setSSLSocketFactory( sslContextFactory.getSslContext().getSocketFactory());
+    conn.setRequestMethod("GET");
 
     conn.setRequestProperty("X-API-KEY", conf.get("nvr_api_key"));
     conn.setRequestProperty("Accept","application/json");

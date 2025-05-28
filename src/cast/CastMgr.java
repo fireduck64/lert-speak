@@ -1,19 +1,16 @@
-
 package duckutil.lertspeak.cast;
 
-import su.litvak.chromecast.api.v2.ChromeCasts;
-import su.litvak.chromecast.api.v2.ChromeCast;
-
-import su.litvak.chromecast.api.v2.Application;
-import su.litvak.chromecast.api.v2.Status;
-
 import duckutil.Config;
-import java.util.TreeSet;
-import java.net.URL;
-import java.net.InetAddress;
-import java.util.logging.Logger;
-import java.util.TreeMap;
 import duckutil.PeriodicThread;
+import java.net.InetAddress;
+import java.net.URL;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.logging.Logger;
+import su.litvak.chromecast.api.v2.Application;
+import su.litvak.chromecast.api.v2.ChromeCast;
+import su.litvak.chromecast.api.v2.ChromeCasts;
+import su.litvak.chromecast.api.v2.Status;
 
 public class CastMgr
 {
@@ -39,7 +36,7 @@ public class CastMgr
   private TreeMap<String, ChromeCast> known_casts=new TreeMap<>();
 
   public class CastDiscoThread extends PeriodicThread
-  { 
+  {
     public CastDiscoThread()
     {
       super(600000L);
@@ -128,7 +125,7 @@ public class CastMgr
             Application app = cc.launchApp(APP_ID);
           }
           cc.load(url.toString());
-   
+
         }
       }
       catch(Exception e)
@@ -139,6 +136,6 @@ public class CastMgr
     }
 
   }
-  
+
 
 }

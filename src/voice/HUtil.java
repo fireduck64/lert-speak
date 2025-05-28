@@ -1,7 +1,6 @@
 package duckutil.lertspeak.voice;
 
 import java.security.MessageDigest;
-
 import java.util.*;
 import org.apache.commons.codec.binary.Hex;
 

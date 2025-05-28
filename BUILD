@@ -24,8 +24,8 @@ java_binary(
 )
 
 java_binary(
-  name = "NoiseTest",
-  main_class = "duckutil.lertspeak.upnp.NoiseTest",
+  name = "IntSpeak",
+  main_class = "duckutil.lertspeak.InteractiveSpeak",
   runtime_deps = [
     ":lertspeaklib",
   ],

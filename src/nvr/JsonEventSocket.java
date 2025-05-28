@@ -1,21 +1,19 @@
 package duckutil.lertspeak.nvr;
 
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.eclipse.jetty.websocket.api.Session;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
 import duckutil.Config;
 import duckutil.PeriodicThread;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.AbstractQueue;
-
-
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
+import org.eclipse.jetty.websocket.client.WebSocketClient;
 
 // Your WebSocket endpoint class
 @org.eclipse.jetty.websocket.api.annotations.WebSocket
@@ -43,7 +41,7 @@ public class JsonEventSocket {
     catch(net.minidev.json.parser.ParseException e)
     {
       logger.log(Level.WARNING, "JSON parse error", e);
-      
+
     }
 
   }
@@ -96,15 +94,15 @@ public class JsonEventSocket {
             // Must be connection failed
             client.stop();
           }
-          
+
           String nvr_host = conf.require("nvr_host");
           String nvr_api_key = conf.require("nvr_api_key");
-          
+
           String destUri = "wss://"+nvr_host +"/proxy/protect/integration/v1/subscribe/events";
 
           // For untrusted certificates
           SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
-          sslContextFactory.setTrustAll(true); 
+          sslContextFactory.setTrustAll(true);
           sslContextFactory.setEndpointIdentificationAlgorithm(null);
 
           client = new WebSocketClient(sslContextFactory);

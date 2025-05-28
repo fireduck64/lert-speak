@@ -1,24 +1,20 @@
 package duckutil.lertspeak.voice;
 
-import duckutil.Config;
-
-import java.net.URL;
-import java.net.URI;
-import java.io.File;
-import java.text.DecimalFormat;
-
 import duckutil.AtomicFileOutputStream;
-import java.net.HttpURLConnection;
-import java.io.OutputStream;
-import net.minidev.json.JSONObject;
-
+import duckutil.Config;
 import duckutil.webserver.DuckWebServer;
-import duckutil.webserver.WebHandler;
 import duckutil.webserver.WebContext;
-import java.util.TreeSet;
+import duckutil.webserver.WebHandler;
+import java.io.File;
 import java.io.FileInputStream;
-
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.TreeSet;
 import java.util.logging.Logger;
+import net.minidev.json.JSONObject;
 
 public class VoiceMedia implements WebHandler
 {
@@ -58,7 +54,7 @@ public class VoiceMedia implements WebHandler
     throws Exception
   {
 
-		String cache_file_name=voice_id + "_" + HUtil.getHash(statement) + ".mp3";
+    String cache_file_name=voice_id + "_" + HUtil.getHash(statement) + ".mp3";
     File cache_file = new File(cache_dir, cache_file_name);
     URL url = new URL("http://" + media_host +":"+media_port +"/" + cache_file.getName());
     synchronized(expected_files)
@@ -109,7 +105,7 @@ public class VoiceMedia implements WebHandler
     double sec = (t2 - t1) / 1000.0;
     DecimalFormat df = new DecimalFormat("0.000");
     logger.info(String.format("Voice generation took %s seconds", df.format(sec)));
-    
+
     return url;
   }
 

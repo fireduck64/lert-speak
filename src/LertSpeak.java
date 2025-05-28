@@ -1,17 +1,15 @@
-
 package duckutil.lertspeak;
 
-import duckutil.lertspeak.cast.CastMgr;
 import duckutil.Config;
 import duckutil.ConfigFile;
-import java.net.URL;
-import java.util.concurrent.LinkedBlockingQueue;
-import net.minidev.json.JSONObject;
+import duckutil.lertspeak.cast.CastMgr;
+import duckutil.lertspeak.nvr.EventProc;
 import duckutil.lertspeak.nvr.JsonEventSocket;
 import duckutil.lertspeak.voice.VoiceMedia;
-import duckutil.lertspeak.nvr.EventProc;
+import java.net.URL;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
-
+import net.minidev.json.JSONObject;
 
 public class LertSpeak
 {
