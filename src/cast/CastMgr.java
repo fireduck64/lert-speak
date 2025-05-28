@@ -95,13 +95,21 @@ public class CastMgr
       String title = cc.getTitle();
       logger.info("player seen: " + cc.getTitle());
       seen++;
-      if (selected_players.contains(title))
+      if (includePlayer(title))
       {
         logger.info("player selected: "+ cc.getTitle());
         selected++;
       }
     }
     logger.info(String.format("Players seen: %d   Players selected: %d", seen, selected));
+
+  }
+  protected synchronized boolean includePlayer(String title)
+  {
+    if (selected_players.contains("ALL")) return true;
+    if (selected_players.contains(title)) return true;
+
+    return false;
 
   }
 
@@ -113,7 +121,7 @@ public class CastMgr
       try
       {
         String title = cc.getTitle();
-        if (selected_players.contains(title))
+        if (includePlayer(title))
         {
           Status status = cc.getStatus();
           if (cc.isAppAvailable(APP_ID) && !status.isAppRunning(APP_ID)) {
