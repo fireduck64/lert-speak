@@ -6,6 +6,7 @@ import duckutil.PeriodicThread;
 import duckutil.lertspeak.LertSpeak;
 import java.net.URL;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
@@ -13,9 +14,11 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import java.util.logging.Logger;
 
 public class EventProc extends PeriodicThread
 {
+  private static final Logger logger = Logger.getLogger("duckutil.lertspeak.nvr");
 
   Config conf;
   LinkedBlockingQueue<JSONObject> queue;
@@ -23,6 +26,9 @@ public class EventProc extends PeriodicThread
   LertSpeak speak;
 
   LRUCache<String, Long> message_times=new LRUCache<>(2000);
+
+  TreeSet<String> allow_cameras=new TreeSet<>();
+  TreeSet<String> disallow_cameras=new TreeSet<>();
 
   private long min_repeat_time_ms;
 
@@ -41,8 +47,19 @@ public class EventProc extends PeriodicThread
 
     min_repeat_time_ms = conf.getIntWithDefault("min_repeat_time", 60) * 1000L;
 
-    //getCameraName("681eb9c2013b9f03e4000423");
-    //getCameraName("6825279f02b75103e400acb0");
+    if (conf.isSet("nvr_camera_allow"))
+    {
+      allow_cameras.addAll( conf.getList("nvr_camera_allow"));
+    }
+    else
+    {
+      allow_cameras.add("ALL");
+    }
+    if (conf.isSet("nvr_camera_disallow"))
+    {
+      disallow_cameras.addAll( conf.getList("nvr_camera_disallow"));
+    }
+
 
     System.out.println(name_map);
 
@@ -60,6 +77,11 @@ public class EventProc extends PeriodicThread
     String camera_id = (String)item.get("device");
 
     String camera_name = getCameraName(camera_id);
+    if (!shouldSpeak(camera_name))
+    {
+      logger.info(String.format("Camera (%s) disallowed by policy", camera_name)); 
+      return;
+    }
 
     StringBuilder sb = new StringBuilder();
     sb.append(camera_name);
@@ -127,6 +149,17 @@ public class EventProc extends PeriodicThread
         speak.say(sb.toString());
       }
     }
+
+  }
+
+  private boolean shouldSpeak(String camera_name)
+  {
+    if (disallow_cameras.contains(camera_name)) return false;
+
+    if (allow_cameras.contains("ALL")) return true;
+    if (allow_cameras.contains(camera_name)) return true;
+    
+    return false;
 
   }
 

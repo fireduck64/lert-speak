@@ -115,6 +115,7 @@ public class CastMgr
   {
     for(ChromeCast cc : known_casts.values())
     {
+      // TODO - to this in a thread in case one gets weird on us
       try
       {
         String title = cc.getTitle();
