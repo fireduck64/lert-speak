@@ -83,6 +83,41 @@ public class CastMgr
 
   }
 
+  public class SpeakThread extends Thread
+  {
+
+    URL url;
+    ChromeCast cc;
+
+    public SpeakThread(ChromeCast cc, URL url)
+    {
+      this.cc = cc;
+      this.url = url;
+
+    }
+    public void run()
+    {
+      try
+      {
+        String title = cc.getTitle();
+        if (includePlayer(title))
+        {
+          Status status = cc.getStatus();
+          if (cc.isAppAvailable(APP_ID) && !status.isAppRunning(APP_ID)) {
+            Application app = cc.launchApp(APP_ID);
+          }
+          cc.load(url.toString());
+
+        }
+      }
+      catch(Exception e)
+      {
+        e.printStackTrace();
+      }
+
+    }
+  }
+
   public synchronized void showPlayers()
   {
     int seen=0;
@@ -115,25 +150,7 @@ public class CastMgr
   {
     for(ChromeCast cc : known_casts.values())
     {
-      // TODO - to this in a thread in case one gets weird on us
-      try
-      {
-        String title = cc.getTitle();
-        if (includePlayer(title))
-        {
-          Status status = cc.getStatus();
-          if (cc.isAppAvailable(APP_ID) && !status.isAppRunning(APP_ID)) {
-            Application app = cc.launchApp(APP_ID);
-          }
-          cc.load(url.toString());
-
-        }
-      }
-      catch(Exception e)
-      {
-        e.printStackTrace();
-      }
-
+      new SpeakThread(cc, url).start();
     }
 
   }
