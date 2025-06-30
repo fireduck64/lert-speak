@@ -8,6 +8,7 @@ import duckutil.webserver.WebHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -26,6 +27,8 @@ public class VoiceMedia implements WebHandler
   int media_port;
   String api_key;
 
+  String voice_mode;
+
   // We are only going to return files that are expected to be asked for
   TreeSet<String> expected_files;
 
@@ -34,9 +37,21 @@ public class VoiceMedia implements WebHandler
   {
     cache_dir = new File(conf.require("media_cache_path"));
 
-    default_voice_id = conf.require("media_voice");
+    voice_mode = conf.getWithDefault("voice_mode","elevenlabs");
 
-    api_key = conf.require("elevenlabs_api_key");
+    if (voice_mode.equals("elevenlabs"))
+    {
+      default_voice_id = conf.require("media_voice");
+      api_key = conf.require("elevenlabs_api_key");
+    }
+    else if (voice_mode.equals("festival"))
+    {
+
+    }
+    else
+    {
+      throw new Exception("Unknown voice mode: " + voice_mode);
+    }
 
     media_host = conf.require("media_host");
     conf.require("media_port");
@@ -58,6 +73,69 @@ public class VoiceMedia implements WebHandler
   public URL getMediaURL(String voice_id, String statement)
     throws Exception
   {
+    if (voice_mode.equals("festival"))
+    {
+      return getMediaURLFestival(voice_mode, statement);
+    }
+    else
+    {
+      return getMediaURLElevenLabs(voice_id, statement);
+    }
+
+  }
+
+  public URL getMediaURLFestival(String voice_id, String statement)
+    throws Exception
+  {
+    String cache_file_name=voice_id + "_" + HUtil.getHash(statement) + ".wav";
+    File cache_file = new File(cache_dir, cache_file_name);
+    URL url = new URL("http://" + media_host +":"+media_port +"/" + cache_file.getName());
+    synchronized(expected_files)
+    {
+      expected_files.add(cache_file_name);
+    }
+    if (cache_file.exists())
+    {
+      return url;
+    }
+
+    logger.info("Sound file not in cache, generating with festival...");
+
+    byte[] buff = new byte[8192];
+
+    Process proc = Runtime.getRuntime().exec("text2wave");
+    PrintStream fest_cmd = new PrintStream(proc.getOutputStream());
+
+    fest_cmd.println(statement);
+    fest_cmd.flush();
+    fest_cmd.close();
+
+    AtomicFileOutputStream file_out = new AtomicFileOutputStream(cache_file);
+    while(true)
+    {
+      int r = proc.getInputStream().read(buff);
+      if (r == -1) break;
+      file_out.write(buff, 0, r);
+    }
+    int rv= proc.waitFor();
+    if (rv == 0)
+    {
+      file_out.flush();
+      file_out.close();
+    }
+    else
+    {
+      file_out.abort();
+      return null;
+    }
+
+    return url;
+
+  }
+
+  public URL getMediaURLElevenLabs(String voice_id, String statement)
+    throws Exception
+  {
 
     String cache_file_name=voice_id + "_" + HUtil.getHash(statement) + ".mp3";
     File cache_file = new File(cache_dir, cache_file_name);
@@ -71,7 +149,7 @@ public class VoiceMedia implements WebHandler
       return url;
     }
 
-    logger.info("Sound file not in cache, generating...");
+    logger.info("Sound file not in cache, generating with elevenlabs...");
     long t1 = System.currentTimeMillis();
 
     URL q = new URL("https://api.elevenlabs.io/v1/text-to-speech/" + voice_id);
@@ -133,7 +211,14 @@ public class VoiceMedia implements WebHandler
 
     File sound_file = new File(cache_dir, path);
     t.setHttpCode(200);
-    t.setContentType("audio/mpeg");
+    if (sound_file.getName().endsWith(".mp3"))
+    {
+      t.setContentType("audio/mpeg");
+    }
+    if (sound_file.getName().endsWith(".wav"))
+    {
+      t.setContentType("audio/x-wav");
+    }
     t.setOutputSize(sound_file.length());
 
     t.writeHeaders();

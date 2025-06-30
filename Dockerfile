@@ -13,7 +13,7 @@ RUN bazel build :all :ApiSpeak_deploy.jar :LertSpeak_deploy.jar
 FROM debian AS run
 
 RUN apt-get update
-RUN apt-get -y install openjdk-17-jre-headless locales
+RUN apt-get -y install openjdk-17-jre-headless locales festival
 
 RUN update-locale LC_TIME=C.UTF-8
 

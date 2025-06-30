@@ -37,12 +37,12 @@ public class ApiSpeak implements WebHandler
   public ApiSpeak(Config config)
     throws Exception
   {
-    default_voice_id = config.require("media_voice");
+    default_voice_id = config.get("media_voice");
     cast_mgr = new CastMgr(config);
 
     voice_media = new VoiceMedia(config);
 
-    Thread.sleep(2500);
+    Thread.sleep(7500);
 
     cast_mgr.showPlayers();
 

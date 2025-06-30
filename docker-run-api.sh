@@ -2,6 +2,7 @@
 
 docker container stop apispeak
 docker container rm apispeak
+docker pull 1209k/apispeak
 
 docker run --name apispeak --restart always -d --network host \
   -e "TZ=America/Los_Angeles" \
